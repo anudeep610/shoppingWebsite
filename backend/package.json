@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev-start": "nodemon ./src/index.js",
-    "start":"node ./src/index.js"
+    "start": "node ./src/index.js"
   },
   "keywords": [
     "mern",
@@ -16,6 +16,7 @@
   "author": "anudeep and pranav",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.12.1",

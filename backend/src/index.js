@@ -3,19 +3,13 @@ const express=require("express");
 const env=require("dotenv");
 const app = express();
 
-
+//routes
+const userRoute=require("./routes/user");
 
 env.config();
 
 app.use(express.json());
-
-app.get("/",(req,res,next)=>{
-    res.status(200).send({message:"hello there"});
-});
-
-app.post("/data",(req,res,next)=>{
-    res.status(200).send(req.body);
-});
+app.use(userRoute);
 
 app.all("/*",(req,res)=>{
     res.status(404).send({message:"no page found"});
