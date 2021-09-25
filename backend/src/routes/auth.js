@@ -3,11 +3,14 @@ const router=express.Router();
 const User=require("../models/user");
 const jwt=require("jsonwebtoken");
 const env=require("dotenv");
-const {requireSignIn}=require("../middleware/middleware");
+const {requireSignIn}=require("../middleware/auth/requireSignIn");
+const {validateSignUpRequest}=require("../middleware/auth/validateSignUpRequest");
+const {validateSignInRequest}=require("../middleware/auth/validateSignInRequest");
+const {isRequestValidated}=require("../middleware/auth/isRequestValidated");
 
 env.config();
 
-router.post("/signin",async(req,res)=>{
+router.post("/signin",validateSignInRequest,isRequestValidated,async(req,res)=>{
     try{
         const foundUser=await User.findOne({email:req.body.email});
         if(!foundUser){
@@ -27,7 +30,7 @@ router.post("/signin",async(req,res)=>{
     }
 });
 
-router.post("/signup",async(req,res)=>{
+router.post("/signup",validateSignUpRequest,isRequestValidated,async(req,res)=>{
     try{
         const foundUser=await User.findOne({email:req.body.email});
         if(foundUser){

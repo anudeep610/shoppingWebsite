@@ -4,12 +4,12 @@ const env=require("dotenv");
 const app = express();
 
 //routes
-const userRoute=require("./routes/user");
+const authRoute=require("./routes/auth");
 
 env.config();
 
 app.use(express.json());
-app.use(userRoute);
+app.use(authRoute);
 
 app.all("/*",(req,res)=>{
     res.status(404).send({message:"no page found"});
