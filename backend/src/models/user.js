@@ -41,7 +41,7 @@ userSchema.virtual("password").set(function(password){
 });
 
 userSchema.methods={
-    authenticate:(password)=>{
+    authenticate:function(password){
         return bycrypt.compareSync(password,this.hash_password);
     }
 }
