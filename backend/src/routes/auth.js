@@ -19,8 +19,12 @@ router.post("/signin",validateSignInRequest,isRequestValidated,async(req,res)=>{
         else{
             if(foundUser.authenticate(req.body.password))
             {
-                const token=jwt.sign({id:foundUser._id,name:foundUser.name,email:foundUser.email,username:foundUser.username,role:foundUser.role},process.env.secret_key,{expiresIn:'1h'});
-                res.status(200).send({message:"loged in successfully",token:token,username:foundUser.username});
+                const token=jwt.sign({_id:foundUser._id,role:foundUser.role},process.env.secret_key,{expiresIn:'1h'});
+                const { _id, email, role, name, username } = foundUser;
+                res.status(200).json({
+                    token,
+                    user: {_id, email, role, name, username}
+                });
             }
             else
                 res.status(200).send({message:"wrong password"});
