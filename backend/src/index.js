@@ -7,6 +7,7 @@ const app = express();
 const authRoute=require("./routes/auth");
 const categoryRoute=require("./routes/category");
 const productRoute=require("./routes/product");
+const cartRotes=require("./routes/cart");
 
 env.config();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(authRoute);
 app.use(categoryRoute);
 app.use(productRoute);
+app.use(cartRotes);
 
 app.all("/*",(req,res)=>{
     res.status(404).send({message:"no page found"});
