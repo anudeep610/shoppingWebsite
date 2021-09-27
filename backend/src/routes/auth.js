@@ -7,7 +7,7 @@ const {requireSignIn}=require("../middleware/auth/requireSignIn");
 const {validateSignUpRequest}=require("../middleware/auth/validateSignUpRequest");
 const {validateSignInRequest}=require("../middleware/auth/validateSignInRequest");
 const {isRequestValidated}=require("../middleware/auth/isRequestValidated");
-
+const shortid=require("shortid"); 
 env.config();
 
 router.post("/signin",validateSignInRequest,isRequestValidated,async(req,res)=>{
@@ -44,6 +44,7 @@ router.post("/signup",validateSignUpRequest,isRequestValidated,async(req,res)=>{
             const newUser=new User({
                 ...req.body
             });
+            newUser.username=shortid.generate();
             await newUser.save();
             res.status(201).send({message:"user created successfully!!!!"});
         }
