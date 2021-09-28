@@ -2,6 +2,7 @@ require("./db/mongoose");
 const express=require("express");
 const env=require("dotenv");
 const app = express();
+const cors=require("cors");
 
 //routes
 const authRoute=require("./routes/auth");
@@ -11,6 +12,7 @@ const cartRotes=require("./routes/cart");
 
 env.config();
 
+app.use(cors());
 app.use(express.json());
 app.use(authRoute);
 app.use(categoryRoute);

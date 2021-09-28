@@ -44,7 +44,7 @@ router.post("/signup",validateSignUpRequest,isRequestValidated,async(req,res)=>{
             const newUser=new User({
                 ...req.body
             });
-            newUser.username=shortid.generate();
+            // newUser.username=shortid.generate();
             await newUser.save();
             res.status(201).send({message:"user created successfully!!!!"});
         }
