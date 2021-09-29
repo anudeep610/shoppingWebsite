@@ -4,19 +4,13 @@ import {login} from "../actions/index";
 import {useDispatch, useSelector} from "react-redux";
 import { useState } from 'react';
 import { Redirect } from 'react-router';
-import { useEffect } from 'react';
-import { isUserLogedIn } from '../actions/auth';
 
 export default function Signin(props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
     const auth = useSelector(state => state.auth );
     const dispatch=useDispatch();
-    useEffect(() => {
-        if(!auth.authenticate)
-            dispatch(isUserLogedIn());
-    }, []);
     const userLogin=(e)=>{
         e.preventDefault();
         const user={
@@ -34,13 +28,13 @@ export default function Signin(props) {
                 <Row style={{marginTop:"5rem"}}>
                     <Col md={{span:6, offset: 3}}>
                         <Form onSubmit={userLogin}>
-                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                            <Form.Group className="mb-3">
                                 <Form.Label>Email address</Form.Label>
-                                <Form.Control onChange={(e)=>setEmail(e.target.value)} value={email} type="email" placeholder="Enter email" />
+                                <Form.Control onChange={(e)=>setEmail(e.target.value)} value={email} type="email" placeholder="Enter email" autoComplete="on" />
                             </Form.Group>
-                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                            <Form.Group className="mb-3">
                                 <Form.Label>Password</Form.Label>
-                                <Form.Control onChange={(e)=>setPassword(e.target.value)} value={password} type="password" placeholder="Password" />
+                                <Form.Control onChange={(e)=>setPassword(e.target.value)} value={password} type="password" placeholder="Password" autoComplete="on"  />
                             </Form.Group>
                             <Button variant="primary" type="submit">
                                 Submit

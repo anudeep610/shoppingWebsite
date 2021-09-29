@@ -21,13 +21,14 @@ router.post("/signin",validateSignInRequest,isRequestValidated,async(req,res)=>{
             {
                 const token=jwt.sign({_id:foundUser._id,role:foundUser.role},process.env.secret_key,{expiresIn:'1h'});
                 const { _id, email, role, name, username } = foundUser;
+                res.cookie("token",token,{expiresIn:"1h"});
                 res.status(200).json({
                     token,
                     user: {_id, email, role, name, username}
                 });
             }
             else
-                res.status(200).send({message:"wrong password"});
+                res.status(400).send({message:"wrong password"});
         }
     }catch(err){
         res.status(400).send({message:err});
@@ -55,6 +56,11 @@ router.post("/signup",validateSignUpRequest,isRequestValidated,async(req,res)=>{
 
 router.post("/profile",requireSignIn,(req,res)=>{
     res.status(200).send(req.user);
+});
+
+router.post("/signout", requireSignIn, (req,res)=>{
+    res.clearCookie("token");
+    res.status(200).send({message:"signed out successfully"});
 });
 
 module.exports=router;

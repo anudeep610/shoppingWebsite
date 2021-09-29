@@ -1,15 +1,19 @@
 import React from 'react'
-import {Jumbotron} from "react-bootstrap";
-// import NavBar from "./NavBar";
+import {Col, Row, Container} from "react-bootstrap";
+import { NavLink } from 'react-router-dom';
+import Sidebar from './Sidebar';
+import "./styles/home.css";
+
 
 export default function Home() {
     return (
         <div>
-        {/* <NavBar /> */}
-        <Jumbotron className="text-center" style={{margin:"5rem"}}>
-            <h1>Welcome to admin dashboard</h1>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium deserunt blanditiis maiores possimus dolorum doloribus quod? Deleniti, laboriosam minima quaerat alias doloribus, soluta fugit culpa ad quisquam, quas eius et.</p>
-        </Jumbotron>
+        <Container fluid>
+        <Row>
+            <Sidebar />
+            <Col md={10} style={{marginLeft:"auto"}}> container</Col>
+        </Row>
+        </Container>
         </div>
     )
 }

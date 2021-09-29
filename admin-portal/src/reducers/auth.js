@@ -1,31 +1,57 @@
 import { authConstants } from "../actions/constants";
 
-const initialState={
-    token:null,
-    user:{
-        name:"",
-        email:""
+const initialState = {
+    token: null,
+    user: {
+        name: "",
+        email: ""
     },
     authenticate: false,
-    authenticating:false
+    authenticating: false,
+    loading:false,
+    error: null,
+    message:""
 };
 
-export default (state=initialState,action)=>{
-    console.log(action);
-    switch(action.type){
+export default (state = initialState, action) => {
+    // console.log(action);
+    switch (action.type) {
         case authConstants.LOGIN_REQUEST:
-            state={
+            state = {
                 ...state,
-                authenticating:true
+                authenticating: true
             }
             break;
         case authConstants.LOGIN_SUCCESS:
-            state={
+            state = {
                 ...state,
                 user: action.payload.user,
-                token:action.payload.token,
-                authenticate:true,
-                authenticating:false
+                token: action.payload.token,
+                authenticate: true,
+                authenticating: false
+            }
+            break;
+        case authConstants.LOGOUT_REQUEST:
+            state = {
+                ...state,
+                loading:true
+            }
+            break;
+        case authConstants.LOGOUT_SUCCESS:
+            state = {
+                ...initialState
+            }
+            break;
+        case authConstants.LOGOUT_FAILURE:
+            state = {
+                ...state, 
+                error:action.payload.error,
+                loading:false
+            }
+            break;
+        default:
+            state = {
+                ...initialState
             }
             break;
     }

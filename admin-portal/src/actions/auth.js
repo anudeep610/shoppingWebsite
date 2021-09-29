@@ -1,5 +1,5 @@
 import axios from "../axios"
-import { authConstants } from "./constants"
+import { authConstants, userConstants } from "./constants"
 
 export const login = (user)=>{
     return async(dispatch)=>{
@@ -10,7 +10,7 @@ export const login = (user)=>{
         if(res.status===200){
             const {token,user} = res.data;
             localStorage.setItem("token",token);
-            localStorage.setitem('user',JSON.stringify(user))
+            localStorage.setItem('user',JSON.stringify(user))
             dispatch({
                 type:authConstants.LOGIN_SUCCESS,
                 payload:{
@@ -21,6 +21,31 @@ export const login = (user)=>{
             if(res.status === 400){
                 dispatch({
                     type:authConstants.LOGIN_FAILURE,
+                    payload:{error:res.data.error}
+                })
+            }
+        }
+    }
+}
+
+export const signup = (user)=>{
+    return async(dispatch)=>{
+        dispatch({type: userConstants.USER_REGISTER_REQUEST})
+        const res = await axios.post("/signup",{
+            ...user
+        });
+        if(res.status===201){
+            const {message} = res.data;
+            dispatch({
+                type:userConstants.USER_REGISTER_SUCCESS,
+                payload:{
+                    message
+                }
+            });
+        }else{
+            if(res.status === 400){
+                dispatch({
+                    type:userConstants.USER_REGISTER_FAILURE,
                     payload:{error:res.data.error}
                 })
             }
@@ -43,6 +68,26 @@ export const isUserLogedIn = () =>{
             dispatch({
                 type:authConstants.LOGIN_FAILURE,
                 payload:{error:"failed to login"}
+            });
+        }
+    }
+}
+
+export const signout = () =>{
+    return async dispatch => {
+        dispatch({type: authConstants.LOGOUT_REQUEST});
+        const res = await axios.post("/signout");
+        if(res.status === 200){
+            localStorage.clear();
+            dispatch({
+                type:authConstants.LOGOUT_SUCCESS,
+            });
+        }else{
+            dispatch({
+                type:authConstants.LOGOUT_FAILURE,
+                payload:{
+                    error:res.data.error
+                }
             });
         }
     }
