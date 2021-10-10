@@ -1,4 +1,4 @@
-import axios from "../axios"
+import axios from "../axios";
 import { authConstants, userConstants } from "./constants"
 
 export const login = (user)=>{
@@ -9,6 +9,7 @@ export const login = (user)=>{
         });
         if(res.status===200){
             const {token,user} = res.data;
+            // console.log(user);
             localStorage.setItem("token",token);
             localStorage.setItem('user',JSON.stringify(user))
             dispatch({

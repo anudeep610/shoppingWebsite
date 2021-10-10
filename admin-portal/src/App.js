@@ -1,8 +1,6 @@
 import './App.css';
 import NavBar from './components/NavBar';
-// import Sidebar from './components/Sidebar';
-import {Route, Switch } from 'react-router-dom'
-import Main from "./components/home";
+import {Route, Switch } from 'react-router-dom';
 import Signup from './components/Signup';
 import Signin from "./components/Signin"; 
 import PrivateRoute from './components/privateRoute';
@@ -11,6 +9,8 @@ import { isUserLogedIn } from './actions';
 import { useEffect } from 'react';
 import products from './components/products';
 import orders from './components/orders';
+import Home from "./components/Home";
+import category from './components/category';
 
 function App() {
   const dispatch = useDispatch();
@@ -19,15 +19,17 @@ function App() {
   useEffect(() => {
     if(!auth.authenticate)
         dispatch(isUserLogedIn());
+    console.log("app.js use effect");
   }, []);
 
   return (
     <>
         <NavBar />
         <Switch>
-          <PrivateRoute path="/" exact component={Main}/>
+          <PrivateRoute path="/" exact component={Home}/>
           <PrivateRoute path="/products" component={products}/>
           <PrivateRoute path="/orders" component={orders}/>
+          <PrivateRoute path="/category" component={category}/>
           <Route path="/signin" exact component={Signin}/>
           <Route path="/signup" exact component={Signup}/>
         </Switch>

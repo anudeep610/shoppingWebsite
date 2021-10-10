@@ -9,6 +9,7 @@ export default function Sidebar() {
                     <li><NavLink to={"/"}>Home</NavLink></li>
                     <li><NavLink to={"/products"}>Products</NavLink></li>
                     <li><NavLink to={"/orders"}>Orders</NavLink></li>
+                    <li><NavLink to={"/category"}>categories</NavLink></li>
                 </ul>
         </Col>
     )

@@ -9,6 +9,7 @@ const authRoute=require("./routes/auth");
 const categoryRoute=require("./routes/category");
 const productRoute=require("./routes/product");
 const cartRotes=require("./routes/cart");
+// const orderRoutes=require("./routes/order");
 
 env.config();
 
@@ -18,6 +19,7 @@ app.use(authRoute);
 app.use(categoryRoute);
 app.use(productRoute);
 app.use(cartRotes);
+// app.use(orderRoutes);
 
 app.all("/*",(req,res)=>{
     res.status(404).send({message:"no page found"});

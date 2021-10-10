@@ -19,7 +19,7 @@ router.post("/signin",validateSignInRequest,isRequestValidated,async(req,res)=>{
         else{
             if(foundUser.authenticate(req.body.password))
             {
-                const token=jwt.sign({_id:foundUser._id,role:foundUser.role},process.env.secret_key,{expiresIn:'1h'});
+                const token=jwt.sign({_id:foundUser._id,role:foundUser.role},process.env.secret_key,{expiresIn:'1d'});
                 const { _id, email, role, name, username } = foundUser;
                 res.cookie("token",token,{expiresIn:"1h"});
                 res.status(200).json({

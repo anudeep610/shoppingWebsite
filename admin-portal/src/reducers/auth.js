@@ -2,10 +2,7 @@ import { authConstants } from "../actions/constants";
 
 const initialState = {
     token: null,
-    user: {
-        name: "",
-        email: ""
-    },
+    user: {},
     authenticate: false,
     authenticating: false,
     loading:false,
@@ -13,8 +10,7 @@ const initialState = {
     message:""
 };
 
-export default (state = initialState, action) => {
-    // console.log(action);
+const authReducer= (state = initialState, action) => {
     switch (action.type) {
         case authConstants.LOGIN_REQUEST:
             state = {
@@ -23,6 +19,7 @@ export default (state = initialState, action) => {
             }
             break;
         case authConstants.LOGIN_SUCCESS:
+            console.log(action.payload.user);
             state = {
                 ...state,
                 user: action.payload.user,
@@ -57,3 +54,5 @@ export default (state = initialState, action) => {
     }
     return state;
 }
+
+export default authReducer

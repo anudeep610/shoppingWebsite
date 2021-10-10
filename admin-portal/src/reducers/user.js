@@ -6,7 +6,7 @@ const initialState={
     loading: false
 };
 
-export default (state=initialState,action)=>{
+const userReducer = (state=initialState,action)=>{
     // console.log(action);
     switch(action.type){
         case userConstants.USER_REGISTER_REQUEST:
@@ -18,14 +18,14 @@ export default (state=initialState,action)=>{
         case userConstants.USER_REGISTER_SUCCESS:
             state = {
                 ...state,
-                loading: true,
+                loading: false,
                 message: action.payload.message
             }
             break;
-        case userConstants.USER_REGISTER_REQUEST:
+        case userConstants.USER_REGISTER_FAILURE:
             state = {
                 ...state,
-                loading: true,
+                loading: false,
                 error: action.payload.error
             }
             break;
@@ -37,3 +37,5 @@ export default (state=initialState,action)=>{
     }
     return state;
 }
+
+export default userReducer;
