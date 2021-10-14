@@ -43,7 +43,7 @@ export default function NavBar() {
 
     return (
         <>
-            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" style={{ zIndex: 1 }}>
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" style={{ zIndex: 1 }} sticky="top">
                 <Container >
                     <Link to="/" className="navbar-brand">Admin Dashboard</Link>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />

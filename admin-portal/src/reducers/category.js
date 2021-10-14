@@ -1,10 +1,22 @@
-import { categoryConstants } from "../actions/constants"
+import { categoryConstants } from "../actions/constants";
+import axios from "../axios";
+
+let obtainedCategories=[];
+
+const getAllCategories = async ()=>{
+    const res = await axios.get("category/getcategory");
+    return res.data;
+}
 
 const initialState={
     loading:false,
-    categories:[],
+    categories:obtainedCategories,
     error:""
 }
+
+getAllCategories().then(result=>{
+    initialState.categories=result;
+});
 
 const buildNewCategories = (parentId, categories, category) => {
     let myCategories = [];
@@ -43,12 +55,6 @@ const buildNewCategories = (parentId, categories, category) => {
 
 const categoryReducer = (state = initialState, action) => {
     switch(action.type){
-        case categoryConstants.GET_ALL_CATEGORIES_SUCCESS:
-            state = {
-                ...state,
-                categories: action.payload.categories
-            }
-            break;
         case categoryConstants.ADD_NEW_CATEGORY_REQUEST:
         state = {
             ...state,
@@ -61,12 +67,12 @@ const categoryReducer = (state = initialState, action) => {
             }
             break;
         case categoryConstants.ADD_NEW_CATEGORY_SUCCESS:
-            // const category = action.payload.category;
-            // const updatedCategories = buildNewCategories(category.partenID, state.categories, category);
-            // console.log('updated categoires', updatedCategories);
+            const category = action.payload.category;
+            const updatedCategories = buildNewCategories(category.parentId, state.categories, category);
+            console.log('updated categoires', updatedCategories);
             state = {
                 ...state,
-                // categories: updatedCategories,
+                categories: updatedCategories,
                 loading: false,
             }
             break;

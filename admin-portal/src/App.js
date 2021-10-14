@@ -19,7 +19,6 @@ function App() {
   useEffect(() => {
     if(!auth.authenticate)
         dispatch(isUserLogedIn());
-    console.log("app.js use effect");
   }, []);
 
   return (
@@ -27,6 +26,7 @@ function App() {
         <NavBar />
         <Switch>
           <PrivateRoute path="/" exact component={Home}/>
+          <PrivateRoute path="/home" exact component={Home}/>
           <PrivateRoute path="/products" component={products}/>
           <PrivateRoute path="/orders" component={orders}/>
           <PrivateRoute path="/category" component={category}/>

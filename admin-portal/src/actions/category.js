@@ -18,9 +18,7 @@ const getAllCategories = () => {
                 payload: { error: res.data.error }
             });
         }
-
-
-}
+    }
 }
 
 export const addCategory = (form) => {
@@ -28,12 +26,12 @@ export const addCategory = (form) => {
         dispatch({ type: categoryConstants.ADD_NEW_CATEGORY_REQUEST });
         const res = await axios.post("category/create", {
             name:form.name,
-            parentID:form.parentID
+            parentId:form.parentID
         });
         if(res.status === 201){
             dispatch({
                 type: categoryConstants.ADD_NEW_CATEGORY_SUCCESS,
-                payload:{ category: res.data.category} 
+                payload:{ category: res.data} 
             });
         }else{
             dispatch({

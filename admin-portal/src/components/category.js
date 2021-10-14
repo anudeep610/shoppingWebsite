@@ -1,35 +1,40 @@
-import React from 'react'
+import React, {useRef} from 'react'
 import { Container, Col, Row, Form, Button} from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { getAllCategories,addCategory } from '../actions';
+import {useState, useEffect } from 'react';
+import { addCategory, getAllCategories } from '../actions';
 
 function Category() {
     const [categoryName, setCategoryName] = useState("");
     const [parentID, setParentID] = useState("");
     const category = useSelector(state => state.category);
-    // console.log(category);
     const dispatch = useDispatch();
-    useEffect(() => {
-        console.log("abcd");
-        // dispatch(getAllCategories());
-    },[]);
 
-    // const rendercategories = (categories)=>{
-    //     let myCategories=[];
-    //     for(let category of categories){
-    //         myCategories.push(
-    //             <li>
-    //                 {category.name}
-    //             </li>
-    //         );
+    // const mounted = useRef();
+    // useEffect(() => {
+    //     if(!mounted.current ){
+    //         mounted.current=true;
     //     }
-    //     return myCategories;
-    // }
+    //     else{
+    //         dispatch(getAllCategories());
+    //     }
+    // },[]);
+
+    const rendercategories = (categories)=>{
+        let myCategories=[];
+        for(let category of categories){
+            myCategories.push(
+                <li key={category.slug}>
+                    {category.name}
+                    <ul>{category.children.length!==0 && rendercategories(category.children)}</ul>
+                </li>
+            );
+        }
+        return myCategories;
+    }
 
     const addNewCategory = ()=>{
-        // console.log(categoryName);
         var form={
             name:categoryName,
             parentID:parentID
@@ -48,13 +53,13 @@ function Category() {
                         <h4>Available Categories</h4>
                     </Col>
                 </Row>
-                {/* <Row>
-            <Col md={12}>
+                <Row>
+            <Col md={10} style={{ marginLeft: "auto" }}>
                 <ul>
                     {rendercategories(category.categories)}
                 </ul>
             </Col>
-        </Row> */}
+        </Row>
                 <Row>
                     <Col md={10} style={{ marginLeft: "auto" }}>
                         <h4>Add new category</h4>
