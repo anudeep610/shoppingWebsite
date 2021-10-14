@@ -63,7 +63,8 @@ const categoryReducer = (state = initialState, action) => {
             break;
         case categoryConstants.ADD_NEW_CATEGORY_FAILURE:
             state={
-                ...initialState
+                ...initialState,
+                categories:[]
             }
             break;
         case categoryConstants.ADD_NEW_CATEGORY_SUCCESS:
@@ -76,6 +77,7 @@ const categoryReducer = (state = initialState, action) => {
                 loading: false,
             }
             break;
+        default:
     }
     return state;
 }

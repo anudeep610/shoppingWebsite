@@ -19,7 +19,8 @@ function App() {
   useEffect(() => {
     if(!auth.authenticate)
         dispatch(isUserLogedIn());
-  }, []);
+        // eslint-disable-next-line
+  },[]);
 
   return (
     <>

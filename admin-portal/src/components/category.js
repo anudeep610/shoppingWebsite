@@ -1,25 +1,15 @@
-import React, {useRef} from 'react'
+import React from 'react'
 import { Container, Col, Row, Form, Button} from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
-import {useState, useEffect } from 'react';
-import { addCategory, getAllCategories } from '../actions';
+import {useState} from 'react';
+import { addCategory } from '../actions';
 
 function Category() {
     const [categoryName, setCategoryName] = useState("");
     const [parentID, setParentID] = useState("");
     const category = useSelector(state => state.category);
     const dispatch = useDispatch();
-
-    // const mounted = useRef();
-    // useEffect(() => {
-    //     if(!mounted.current ){
-    //         mounted.current=true;
-    //     }
-    //     else{
-    //         dispatch(getAllCategories());
-    //     }
-    // },[]);
 
     const rendercategories = (categories)=>{
         let myCategories=[];
@@ -32,6 +22,15 @@ function Category() {
             );
         }
         return myCategories;
+    }
+
+    const cerateCategoryList=(categories,options=[])=>{
+        for(let cat of categories){
+            options.push({val:cat._id,name:cat.name});
+            if(cat.children.length)
+                cerateCategoryList(cat.children,options);
+        }
+        return options;
     }
 
     const addNewCategory = ()=>{
@@ -70,9 +69,15 @@ function Category() {
                                     <Form.Label>Name</Form.Label>
                                     <Form.Control onChange={(e) => setCategoryName(e.target.value)} type="text" placeholder="Name" required/>
                                 </Form.Group>
-                                <Form.Group as={Col} >
-                                    <Form.Label>Parent Id</Form.Label>
-                                    <Form.Control onChange={(e)=>setParentID(e.target.value)} type="text" placeholder="Parent Id" />
+                                <Form.Group as={Col}>
+                                <select className="form-select" value={parentID} onChange={(e)=>setParentID(e.target.value)}>
+                                    <option>Select a category</option>
+                                    {
+                                        cerateCategoryList(category.categories).map(option=>{
+                                            return <option value={option.val} key={option.val}>{option.name}</option>
+                                        })
+                                    }
+                                </select>
                                 </Form.Group>
                             </Row>
                                 <Button variant="primary" onClick={addNewCategory}>Submit</Button>
