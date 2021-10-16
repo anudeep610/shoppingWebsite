@@ -25,12 +25,11 @@ router.post("/product/create",requireSignIn,isAdmin,upload.array("pictures"),asy
         const{
             name,price,description,category,createdBy,quantity
         }=req.body;
-        let pictures=[]
-        if(req.files.length>0)
-        {
-            pictures=req.files.map(file=>{
-                return {img:file.filename }
-            })
+        let pictures=[];
+        if(req.files.length > 0){
+            pictures = req.files.map(file => {
+                return { img: file.filename }
+            });
         }
         const newProduct=new Product({
             name,
@@ -43,9 +42,20 @@ router.post("/product/create",requireSignIn,isAdmin,upload.array("pictures"),asy
             createdBy:req.user._id
         });
         await newProduct.save();
-        res.status(201).send(newProduct);
+        const newProd=await Product.find({slug:slugify(name)}).select('_id name price quantity slug description pictures category createdAt updatedAt createdBy').populate({ path: 'category', select: '_id name' });
+        res.status(201).send(newProd[0]);
     }catch(err){
         res.status(400).send({message:err})
     }
 });
+
+router.get("/product/getproducts",async(req,res)=>{
+    try{
+        let products=await Product.find({}).select('_id name price quantity slug description pictures category createdAt updatedAt createdBy').populate({ path: 'category', select: '_id name' })
+        res.status(200).send(products);
+    }catch(error){
+        res.status(400).send({message:error});
+    }
+});
+
 module.exports=router;

@@ -36,13 +36,13 @@ const userSchema=new mongoose.Schema({
     phNo:{type:String}
 }, {timestamps:true});
 
-userSchema.virtual("password").set(function(password){
-    this.hash_password=bycrypt.hashSync(password,5);
-});
+// userSchema.virtual("password").set(function(password){
+//     this.hash_password=bycrypt.hashSync(password,5);
+// });
 
 userSchema.methods={
-    authenticate:function(password){
-        return bycrypt.compareSync(password,this.hash_password);
+    authenticate:async function(password){
+        return await bycrypt.compare(password,this.hash_password);
     }
 }
 module.exports=mongoose.model("User",userSchema);

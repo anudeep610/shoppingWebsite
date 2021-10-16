@@ -4,8 +4,8 @@ import axios from "../axios";
 let obtainedCategories=[];
 
 const getAllCategories = async ()=>{
-    const res = await axios.get("category/getcategory");
-    return res.data;
+        const res = await axios.get("category/getcategory");
+        return res.data;
 }
 
 const initialState={
@@ -20,7 +20,7 @@ getAllCategories().then(result=>{
 
 const buildNewCategories = (parentId, categories, category) => {
     let myCategories = [];
-    if(parentId === undefined){
+    if(parentId === ""){
         return [
             ...categories,
             {

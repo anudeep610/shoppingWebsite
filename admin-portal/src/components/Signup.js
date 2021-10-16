@@ -32,6 +32,12 @@ export default function Signup() {
         };
         user.role="admin";
         dispatch(signup(user));
+        setName("");
+        setEmail("");
+        setPassword("");
+        setPhno("");
+        setUserName("");
+        return <Redirect to={"/signin"}/>
     }
 
     return (

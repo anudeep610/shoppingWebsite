@@ -8,6 +8,7 @@ const {validateSignUpRequest}=require("../middleware/auth/validateSignUpRequest"
 const {validateSignInRequest}=require("../middleware/auth/validateSignInRequest");
 const {isRequestValidated}=require("../middleware/auth/isRequestValidated");
 const shortid=require("shortid"); 
+const bcrypt=require("bcrypt");
 env.config();
 
 router.post("/signin",validateSignInRequest,isRequestValidated,async(req,res)=>{
@@ -42,8 +43,22 @@ router.post("/signup",validateSignUpRequest,isRequestValidated,async(req,res)=>{
             res.status(200).send({message:"user already exists"});
         }
         else{
+            const {
+                name,
+                username,
+                email,
+                password,
+                phNo,
+                role
+            }=req.body;
+            const hash_password=await bcrypt.hash(password,10)
             const newUser=new User({
-                ...req.body
+                name,
+                username,
+                email,
+                hash_password,
+                phNo,
+                role
             });
             // newUser.username=shortid.generate();
             await newUser.save();
