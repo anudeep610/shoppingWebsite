@@ -139,7 +139,7 @@ export default function Products() {
                 </Row>
                 <Row>
                     <Col md="6">
-                        <label className="key">Quantity</label>
+                        <label className="key">Stock</label>
                         <p className="value">{productDetails.quantity}</p>
                     </Col>
                     <Col md="6">
@@ -193,7 +193,7 @@ export default function Products() {
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
-                                    <th>Quantity</th>
+                                    <th>Stock</th>
                                     <th>Price</th>
                                     <th>Category</th>
                                 </tr>

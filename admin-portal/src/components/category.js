@@ -4,10 +4,20 @@ import Sidebar from './Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { addCategory } from '../actions';
+import CheckboxTree from 'react-checkbox-tree';
+import { MdOutlineCheckBoxOutlineBlank,MdCheckBox } from "react-icons/md";
+import {IoMdCheckboxOutline,IoIosArrowForward, IoIosArrowUp} from "react-icons/io";
+import {VscExpandAll,VscCloseAll} from "react-icons/vsc"
+import {AiOutlineFolder, AiOutlineFolderOpen, AiOutlineFile} from "react-icons/ai";
+
+import 'react-checkbox-tree/lib/react-checkbox-tree.css';
+import "./styles/category.css";
 
 function Category() {
     const [categoryName, setCategoryName] = useState("");
     const [parentID, setParentID] = useState("");
+    const [checked, setChecked] = useState([]);
+    const [expanded, setExpanded] = useState([]);
     const category = useSelector(state => state.category);
     const dispatch = useDispatch();
 
@@ -15,10 +25,11 @@ function Category() {
         let myCategories = [];
         for (let category of categories) {
             myCategories.push(
-                <li key={category.slug}>
-                    {category.name}
-                    <ul>{category.children.length !== 0 && rendercategories(category.children)}</ul>
-                </li>
+                {
+                    value: category._id,
+                    label: category.name,
+                    children: category.children.length !== 0 && rendercategories(category.children)
+                }
             );
         }
         return myCategories;
@@ -54,9 +65,25 @@ function Category() {
                 </Row>
                 <Row>
                     <Col md={10} style={{ marginLeft: "auto" }}>
-                        <ul>
-                            {rendercategories(category.categories)}
-                        </ul>
+                        <CheckboxTree
+                            nodes={rendercategories(category.categories)}
+                            checked={checked}
+                            expanded={expanded}
+                            onCheck={checked => setChecked(checked)}
+                            onExpand={expanded => setExpanded(expanded)}
+                            icons={{
+                                check: <MdCheckBox/>,
+                                uncheck: <MdOutlineCheckBoxOutlineBlank/>,
+                                halfCheck: <IoMdCheckboxOutline/>,
+                                expandClose: <IoIosArrowForward/>,
+                                expandOpen: <IoIosArrowUp/>,
+                                expandAll: <VscExpandAll/>,
+                                collapseAll: <VscCloseAll />,
+                                parentClose: <AiOutlineFolder />,
+                                parentOpen: <AiOutlineFolderOpen/>,
+                                leaf: <AiOutlineFile/>
+                            }}
+                        />
                     </Col>
                 </Row>
                 <Row>
@@ -69,7 +96,7 @@ function Category() {
                                         <Form.Label>Name</Form.Label>
                                         <Form.Control value={categoryName} onChange={(e) => setCategoryName(e.target.value)} type="text" placeholder="Name" required />
                                     </Form.Group>
-                                    <Form.Group as={Col} style={{marginTop:"2rem"}}>
+                                    <Form.Group as={Col} style={{ marginTop: "2rem" }}>
                                         <select className="form-select" value={parentID} onChange={(e) => setParentID(e.target.value)}>
                                             <option value="">Select a category</option>
                                             {
