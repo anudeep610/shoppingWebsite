@@ -41,6 +41,24 @@ export const addCategory = (form) => {
     }
 }
 
+export const updateCategories = (form) => {
+    return async dispatch => {
+        dispatch({type:categoryConstants.UPDATE_CATEGORY_REQUEST});
+        const res = await axios.post("category/update", form);
+        if(res.status === 201){
+            dispatch({
+                type:categoryConstants.UPDATE_CATEGORY_SUCCESS,
+                payload:res.data
+            })
+        }else{
+            dispatch({
+                type:categoryConstants.UPDATE_CATEGORY_FAILURE,
+                payload:res.data.error
+            })
+        }
+    }
+}
+
 
 export {
     getAllCategories

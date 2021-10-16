@@ -23,9 +23,9 @@ app.use(cartRotes);
 app.use(express.static(path.join(__dirname, 'uploads')));
 // app.use(orderRoutes);
 
-// app.all("/*",(req,res)=>{
-//     res.status(404).send({message:"no page found"});
-// });
+app.all("/*",(req,res)=>{
+    res.status(404).send({message:"no page found"});
+});
 
 app.listen(process.env.PORT,()=>{
     console.log(`server is running on ${process.env.PORT}`);

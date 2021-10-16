@@ -1,14 +1,14 @@
 import React from 'react'
-import { Container, Col, Row, Form, Button } from 'react-bootstrap';
+import { Container, Col, Row, Form, Button, Modal } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
-import { addCategory } from '../actions';
+import { addCategory, updateCategories } from '../actions';
 import CheckboxTree from 'react-checkbox-tree';
-import { MdOutlineCheckBoxOutlineBlank,MdCheckBox } from "react-icons/md";
-import {IoMdCheckboxOutline,IoIosArrowForward, IoIosArrowUp} from "react-icons/io";
-import {VscExpandAll,VscCloseAll} from "react-icons/vsc"
-import {AiOutlineFolder, AiOutlineFolderOpen, AiOutlineFile} from "react-icons/ai";
+import { MdOutlineCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
+import { IoMdCheckboxOutline, IoIosArrowForward, IoIosArrowUp } from "react-icons/io";
+import { VscExpandAll, VscCloseAll } from "react-icons/vsc"
+import { AiOutlineFolder, AiOutlineFolderOpen, AiOutlineFile } from "react-icons/ai";
 
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import "./styles/category.css";
@@ -18,6 +18,10 @@ function Category() {
     const [parentID, setParentID] = useState("");
     const [checked, setChecked] = useState([]);
     const [expanded, setExpanded] = useState([]);
+    const [checkedArray, setCheckedArray] = useState([]);
+    const [expandedArray, setExpandedArray] = useState([]);
+    const [updateCategoryModal, setUpdateCategoryModal] = useState(false);
+    const [addCategoryModal, setAddCategoryModal] = useState(false);
     const category = useSelector(state => state.category);
     const dispatch = useDispatch();
 
@@ -37,7 +41,7 @@ function Category() {
 
     const cerateCategoryList = (categories, options = []) => {
         for (let cat of categories) {
-            options.push({ val: cat._id, name: cat.name });
+            options.push({ val: cat._id, name: cat.name, parentId: cat.parentId });
             if (cat.children.length)
                 cerateCategoryList(cat.children, options);
         }
@@ -52,15 +56,164 @@ function Category() {
         dispatch(addCategory(form));
         setCategoryName('');
         setParentID('');
+        setAddCategoryModal(false);
     }
+    const updateCategory = async () => {
+        setUpdateCategoryModal(true);
+        const categories = cerateCategoryList(category.categories);
+        const checkedArr = [];
+        const expandedArr = [];
+        checked.length > 0 && checked.forEach((catId, index) => {
+            const category = categories.find((category, _index) => catId === category.val);
+            category && checkedArr.push(category);
+        });
+        expanded.length > 0 && expanded.forEach((catId, index) => {
+            const category = categories.find((category, _index) => catId === category.val);
+            category && expandedArr.push(category);
+        });
+        await setCheckedArray(checkedArr);
+        await setExpandedArray(expandedArr);
+    }
+    const handleCategoryInput = (key, value, index, type) => {
+        if (type === 'checked') {
+            const updatedCheckedArray = checkedArray.map((item, _index) => index === _index ? { ...item, [key]: value } : item)
+            setCheckedArray(updatedCheckedArray);
+        } else if (type === 'expanded') {
+            const updatedExpandedArray = expandedArray.map((item, _index) => index === _index ? { ...item, [key]: value } : item)
+            setExpandedArray(updatedExpandedArray);
+        }
+    }
+    const saveUpdatedCategories = () => {
+        const form = [];
+        expandedArray.forEach((item, index) => {
+            const details = {};
+            details._id = item.val;
+            details.name = item.name;
+            details.parentId = item.parentId ? item.parentId : "";
+            form.push(details);
+        });
+        checkedArray.forEach((item, index) => {
+            const details = {};
+            details._id = item.val;
+            details.name = item.name;
+            details.parentId = item.parentId ? item.parentId : "";
+            form.push(details);
+        });
+        dispatch(updateCategories(form))
+        setUpdateCategoryModal(false)
+    }
+    const renderUpdateCategoryModal = () => {
+        return <Modal size="lg" show={updateCategoryModal} onHide={() => setUpdateCategoryModal(false)}>
+            <Modal.Header >
+                <Modal.Title>Edit Product Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form>
+                    <Row>
+                        <Col>
+                            <h6><strong>Expanded</strong></h6>
+                        </Col>
+                    </Row>
+                    {
+                        expandedArray.length > 0 ?
+                            expandedArray.map((item, index) =>
+                                <Row className="mb-3" key={index}>
+                                    <Form.Group as={Col}>
+                                        <Form.Control value={item.name} type="text" placeholder="Name" required onChange={(e) => handleCategoryInput('name', e.target.value, index, 'expanded')} />
+                                    </Form.Group>
+                                    <Form.Group as={Col} >
+                                        <select value={item.parentId} className="form-select" onChange={(e) => handleCategoryInput('parentId', e.target.value, index, 'expanded')}>
+                                            <option value="">Select a category</option>
+                                            {
+                                                cerateCategoryList(category.categories).map(option => {
+                                                    return <option value={option.val} key={option.val}>{option.name}</option>
+                                                })
+                                            }
+                                        </select>
+                                    </Form.Group>
+                                </Row>
+                            ) : <h6>Expand categories in the category tree</h6>
+                    }
+
+                    <Row>
+                        <Col>
+                            <h6><strong>Checked</strong></h6>
+                        </Col>
+                    </Row>
+                    {
+                        checkedArray.length > 0 ?
+                            checkedArray.map((item, index) =>
+                                <Row className="mb-3" key={index}>
+                                    <Form.Group as={Col}>
+                                        <Form.Control value={item.name} type="text" placeholder="Name" required onChange={(e) => handleCategoryInput('name', e.target.value, index, 'checked')} />
+                                    </Form.Group>
+                                    <Form.Group as={Col} >
+                                        <select value={item.parentId} className="form-select" onChange={(e) => handleCategoryInput('parentId', e.target.value, index, 'checked')}>
+                                            <option value="">Select a category</option>
+                                            {
+                                                cerateCategoryList(category.categories).map(option => {
+                                                    return <option value={option.val} key={option.val}>{option.name}</option>
+                                                })
+                                            }
+                                        </select>
+                                    </Form.Group>
+                                </Row>
+                            ) : <h6>Check categories in the category tree</h6>
+                    }
+                </Form>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={() => setUpdateCategoryModal(false)}>Close</Button>
+                <Button variant="success" onClick={saveUpdatedCategories}>Save Changes</Button>
+            </Modal.Footer>
+        </Modal>
+    }
+    const renderAddCategoryModal = () => {
+        return <Modal size="lg" show={addCategoryModal} onHide={() => setAddCategoryModal(false)}>
+            <Modal.Header >
+                <Modal.Title>Add New Product</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form>
+                    <Row className="mb-3">
+                        <Form.Group as={Col}>
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control value={categoryName} onChange={(e) => setCategoryName(e.target.value)} type="text" placeholder="Name" required />
+                        </Form.Group>
+                        <Form.Group as={Col} style={{ marginTop: "2rem" }}>
+                            <select className="form-select" value={parentID} onChange={(e) => setParentID(e.target.value)}>
+                                <option value="">Select a category</option>
+                                {
+                                    cerateCategoryList(category.categories).map(option => {
+                                        return <option value={option.val} key={option.val}>{option.name}</option>
+                                    })
+                                }
+                            </select>
+                        </Form.Group>
+                    </Row>
+                </Form>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button className="mb-2" variant="secondary" onClick={() => setAddCategoryModal(false)}>Cancel</Button>
+                <Button className="mb-2" variant="primary" onClick={addNewCategory}>Submit</Button>
+            </Modal.Footer>
+        </Modal>
+    }
+
+
 
     return (
         <div>
             <Container fluid>
                 <Row>
                     <Sidebar />
-                    <Col md={10} style={{ margin: ".7rem 0 0 auto" }}>
+                    <Col md={10} style={{ display: "flex", justifyContent: "space-between", margin: ".7rem 0 0 auto" }}>
                         <h4>Available Categories</h4>
+                        <div>
+                            <Button className="mx-1" variant="primary" onClick={()=>setAddCategoryModal(true)}>Add</Button>
+                            <Button className="mx-1" variant="warning" onClick={updateCategory} >Edit</Button>
+                            <Button className="mx-1" variant="danger"  >Delete</Button>
+                        </div>
                     </Col>
                 </Row>
                 <Row>
@@ -72,47 +225,23 @@ function Category() {
                             onCheck={checked => setChecked(checked)}
                             onExpand={expanded => setExpanded(expanded)}
                             icons={{
-                                check: <MdCheckBox/>,
-                                uncheck: <MdOutlineCheckBoxOutlineBlank/>,
-                                halfCheck: <IoMdCheckboxOutline/>,
-                                expandClose: <IoIosArrowForward/>,
-                                expandOpen: <IoIosArrowUp/>,
-                                expandAll: <VscExpandAll/>,
+                                check: <MdCheckBox />,
+                                uncheck: <MdOutlineCheckBoxOutlineBlank />,
+                                halfCheck: <IoMdCheckboxOutline />,
+                                expandClose: <IoIosArrowForward />,
+                                expandOpen: <IoIosArrowUp />,
+                                expandAll: <VscExpandAll />,
                                 collapseAll: <VscCloseAll />,
                                 parentClose: <AiOutlineFolder />,
-                                parentOpen: <AiOutlineFolderOpen/>,
-                                leaf: <AiOutlineFile/>
+                                parentOpen: <AiOutlineFolderOpen />,
+                                leaf: <AiOutlineFile />
                             }}
                         />
                     </Col>
                 </Row>
-                <Row>
-                    <Col md={10} style={{ marginLeft: "auto" }}>
-                        <h4>Add new category</h4>
-                        <Container>
-                            <Form>
-                                <Row className="mb-3">
-                                    <Form.Group as={Col}>
-                                        <Form.Label>Name</Form.Label>
-                                        <Form.Control value={categoryName} onChange={(e) => setCategoryName(e.target.value)} type="text" placeholder="Name" required />
-                                    </Form.Group>
-                                    <Form.Group as={Col} style={{ marginTop: "2rem" }}>
-                                        <select className="form-select" value={parentID} onChange={(e) => setParentID(e.target.value)}>
-                                            <option value="">Select a category</option>
-                                            {
-                                                cerateCategoryList(category.categories).map(option => {
-                                                    return <option value={option.val} key={option.val}>{option.name}</option>
-                                                })
-                                            }
-                                        </select>
-                                    </Form.Group>
-                                </Row>
-                                <Button className="mb-2" variant="primary" onClick={addNewCategory}>Submit</Button>
-                            </Form>
-                        </Container>
-                    </Col>
-                </Row>
             </Container>
+            {renderUpdateCategoryModal()}
+            {renderAddCategoryModal()}
         </div>
     );
 }
