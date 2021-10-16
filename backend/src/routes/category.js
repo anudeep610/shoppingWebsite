@@ -86,4 +86,22 @@ router.post("/category/update",requireSignIn,isAdmin,async (req, res) => {
     }
 });
 
+router.post("/category/delete",async(req,res)=>{
+    try{
+        const {toBeDeletedIds}=req.body;
+        const deletedCategories=[]
+        for(let i=0;i<toBeDeletedIds.length;i++){
+            const deletedCategory=await Category.findByIdAndDelete({_id:toBeDeletedIds[i].val})
+            deletedCategories.push(deletedCategory);
+        }
+        if(deletedCategories.length===toBeDeletedIds.length)
+            res.status(201).send({message:"deleted categories successfully"});
+        else
+            res.status(400).send({message:"something went wrong"});
+
+    }catch(err){
+        res.status(400).send({message:err});
+    }
+})
+
 module.exports = router;

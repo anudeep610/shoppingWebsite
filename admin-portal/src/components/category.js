@@ -3,7 +3,7 @@ import { Container, Col, Row, Form, Button, Modal } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
-import { addCategory, updateCategories } from '../actions';
+import { addCategory, updateCategories, deleteCate, getAllCategory } from '../actions';
 import CheckboxTree from 'react-checkbox-tree';
 import { MdOutlineCheckBoxOutlineBlank, MdCheckBox } from "react-icons/md";
 import { IoMdCheckboxOutline, IoIosArrowForward, IoIosArrowUp } from "react-icons/io";
@@ -22,6 +22,7 @@ function Category() {
     const [expandedArray, setExpandedArray] = useState([]);
     const [updateCategoryModal, setUpdateCategoryModal] = useState(false);
     const [addCategoryModal, setAddCategoryModal] = useState(false);
+    const [deleteCategoryModal, setDeleteCategoryModal] = useState(false)
     const category = useSelector(state => state.category);
     const dispatch = useDispatch();
 
@@ -53,13 +54,21 @@ function Category() {
             name: categoryName,
             parentID: parentID
         };
-        dispatch(addCategory(form));
+        dispatch(addCategory(form))
+        .then(result=>{
+            if(result){
+                dispatch(getAllCategory());
+            }
+        })
         setCategoryName('');
         setParentID('');
         setAddCategoryModal(false);
     }
-    const updateCategory = async () => {
+    const updateCategory = () => {
+        createCheckedAndExpandedArray();
         setUpdateCategoryModal(true);
+    }
+    const createCheckedAndExpandedArray=()=>{
         const categories = cerateCategoryList(category.categories);
         const checkedArr = [];
         const expandedArr = [];
@@ -71,8 +80,8 @@ function Category() {
             const category = categories.find((category, _index) => catId === category.val);
             category && expandedArr.push(category);
         });
-        await setCheckedArray(checkedArr);
-        await setExpandedArray(expandedArr);
+        setCheckedArray(checkedArr);
+        setExpandedArray(expandedArr);
     }
     const handleCategoryInput = (key, value, index, type) => {
         if (type === 'checked') {
@@ -100,7 +109,12 @@ function Category() {
             form.push(details);
         });
         dispatch(updateCategories(form))
-        setUpdateCategoryModal(false)
+        .then(result=>{
+            if(result){
+                dispatch(getAllCategory());
+            }
+        })
+        setUpdateCategoryModal(false);
     }
     const renderUpdateCategoryModal = () => {
         return <Modal size="lg" show={updateCategoryModal} onHide={() => setUpdateCategoryModal(false)}>
@@ -200,7 +214,37 @@ function Category() {
         </Modal>
     }
 
+    const deleteCategories=()=>{
+        createCheckedAndExpandedArray();
+        setDeleteCategoryModal(true);
+    }
 
+    const deleteCategory=()=>{
+        dispatch(deleteCate(checkedArray))
+        .then(result=>{
+            if(result){
+                dispatch(getAllCategory());
+            }
+        });
+        setDeleteCategoryModal(false);
+    }
+    const renderDeleteCategoryModal=()=>{
+        return <Modal show={deleteCategoryModal}>
+            <Modal.Header>
+                <Modal.Title>Delete Categories</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {checkedArray.length ? checkedArray.map((item,index)=> <div key={index}>{item.name}</div> ):<span>Check items to delete them</span>}
+            </Modal.Body>
+            <Modal.Footer>
+                {checkedArray.length ? 
+                    <> <Button variant="secondary" onClick={()=>setDeleteCategoryModal(false)}>No</Button>
+                    <Button variant="danger" onClick={deleteCategory}>Yes</Button> </>
+                    : <Button variant="primary" onClick={()=>setDeleteCategoryModal(false)}>Ok</Button>
+            }
+            </Modal.Footer>
+        </Modal>
+    }
 
     return (
         <div>
@@ -212,7 +256,7 @@ function Category() {
                         <div>
                             <Button className="mx-1" variant="primary" onClick={()=>setAddCategoryModal(true)}>Add</Button>
                             <Button className="mx-1" variant="warning" onClick={updateCategory} >Edit</Button>
-                            <Button className="mx-1" variant="danger"  >Delete</Button>
+                            <Button className="mx-1" variant="danger"  onClick={deleteCategories}>Delete</Button>
                         </div>
                     </Col>
                 </Row>
@@ -242,6 +286,7 @@ function Category() {
             </Container>
             {renderUpdateCategoryModal()}
             {renderAddCategoryModal()}
+            {renderDeleteCategoryModal()}
         </div>
     );
 }

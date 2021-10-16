@@ -50,13 +50,11 @@ const buildNewCategories = (parentId, categories, category) => {
 
 const categoryReducer = (state = initialState, action) => {
     switch (action.type) {
-        case categoryConstants.UPDATE_CATEGORY_SUCCESS:
+        case categoryConstants.GET_ALL_CATEGORIES_SUCCESS:
             state = {
-                ...state
+                ...state,
+                categories: action.payload.categories
             }
-            getAllCategories().then(result => {
-                state.categories = result;
-            });
             break;
         case categoryConstants.ADD_NEW_CATEGORY_REQUEST:
             state = {
