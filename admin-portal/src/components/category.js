@@ -50,6 +50,10 @@ function Category() {
     }
 
     const addNewCategory = () => {
+        if(categoryName===""){
+            alert("Name cannot be empty");
+            return;
+        }
         var form = {
             name: categoryName,
             parentID: parentID
@@ -108,12 +112,7 @@ function Category() {
             details.parentId = item.parentId ? item.parentId : "";
             form.push(details);
         });
-        dispatch(updateCategories(form))
-        .then(result=>{
-            if(result){
-                dispatch(getAllCategory());
-            }
-        })
+        dispatch(updateCategories(form));
         setUpdateCategoryModal(false);
     }
     const renderUpdateCategoryModal = () => {
@@ -163,7 +162,7 @@ function Category() {
                                     </Form.Group>
                                     <Form.Group as={Col} >
                                         <select value={item.parentId} className="form-select" onChange={(e) => handleCategoryInput('parentId', e.target.value, index, 'checked')}>
-                                            <option value="">Select a category</option>
+                                            <option value=" ">Select a category</option>
                                             {
                                                 cerateCategoryList(category.categories).map(option => {
                                                     return <option value={option.val} key={option.val}>{option.name}</option>
@@ -177,8 +176,11 @@ function Category() {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => setUpdateCategoryModal(false)}>Close</Button>
-                <Button variant="success" onClick={saveUpdatedCategories}>Save Changes</Button>
+            {checkedArray.length || expandedArray.length ? 
+                    <> <Button variant="secondary" onClick={() => setUpdateCategoryModal(false)}>Close</Button>
+                    <Button variant="success" onClick={saveUpdatedCategories}>Save Changes</Button></>
+                    : <Button variant="primary" onClick={()=>setUpdateCategoryModal(false)}>Ok</Button>
+            }
             </Modal.Footer>
         </Modal>
     }
@@ -191,10 +193,9 @@ function Category() {
                 <Form>
                     <Row className="mb-3">
                         <Form.Group as={Col}>
-                            <Form.Label>Name</Form.Label>
                             <Form.Control value={categoryName} onChange={(e) => setCategoryName(e.target.value)} type="text" placeholder="Name" required />
                         </Form.Group>
-                        <Form.Group as={Col} style={{ marginTop: "2rem" }}>
+                        <Form.Group as={Col}>
                             <select className="form-select" value={parentID} onChange={(e) => setParentID(e.target.value)}>
                                 <option value="">Select a category</option>
                                 {
@@ -220,16 +221,11 @@ function Category() {
     }
 
     const deleteCategory=()=>{
-        dispatch(deleteCate(checkedArray))
-        .then(result=>{
-            if(result){
-                dispatch(getAllCategory());
-            }
-        });
+        dispatch(deleteCate(checkedArray));
         setDeleteCategoryModal(false);
     }
     const renderDeleteCategoryModal=()=>{
-        return <Modal show={deleteCategoryModal}>
+        return <Modal size="lg" show={deleteCategoryModal}>
             <Modal.Header>
                 <Modal.Title>Delete Categories</Modal.Title>
             </Modal.Header>

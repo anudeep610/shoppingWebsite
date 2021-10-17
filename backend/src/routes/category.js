@@ -4,6 +4,7 @@ const slugify = require("slugify");
 const Category = require("../models/category");
 const { isAdmin } = require("../middleware/auth/isAdmin");
 const { requireSignIn } = require("../middleware/auth/requireSignIn");
+const shortId=require("shortid");
 
 const createCategoryList = (categories, parentId = null) => {
     const categoryList = [];
@@ -28,7 +29,7 @@ router.post("/category/create", requireSignIn, isAdmin, async (req, res) => {
     try {
         const catObj = {
             name: req.body.name,
-            slug: slugify(req.body.name),
+            slug: slugify(req.body.name) + shortId.generate(),
             parentId: null
         }
         if (req.body.parentId)
@@ -61,10 +62,12 @@ router.post("/category/update",requireSignIn,isAdmin,async (req, res) => {
             for (let i = 0; i < req.body.length; i++) {
                 const category = {
                     name:req.body[i].name,
-                    slug:slugify(req.body[i].name)
+                    slug:req.body[i].slug
                 };
-                if (req.body[i].parentId !== "") {
+                if (req.body[i].parentId !== "" && req.body[i].parentId !== " ") {
                     category.parentId = req.body[i].parentId;
+                }else{
+                    category.parentId = null;
                 }
                 const updatedCategory = await Category.findOneAndUpdate({ _id: req.body[i]._id }, category, { new: true });
                 updatedCategories.push(updatedCategory);
@@ -73,10 +76,12 @@ router.post("/category/update",requireSignIn,isAdmin,async (req, res) => {
         } else {
             const category={
                 name:req.body[0].name,
-                slug:slugify(req.body[0].name)
+                slug:req.body[0].slug
             }
-            if (req.body[0].parentId !== "") {
+            if (req.body[0].parentId !== ""&& req.body[0].parentId !== " ") {
                 category.parentId = req.body[0].parentId;
+            }else{
+                category.parentId = null;
             }
             const updatedCategory = await Category.findOneAndUpdate({ _id:req.body[0]._id }, category, { new: true });
             return res.status(201).json( updatedCategory );

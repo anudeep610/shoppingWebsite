@@ -1,4 +1,7 @@
+// import { authConstants } from "./actions/constants";
+// import store from "./store";
 import axios from "axios";
+
 
 const token = window.localStorage.getItem("token");
 
@@ -8,5 +11,7 @@ const axiosInstance=axios.create({
         "Authorization": token ? `Bearer ${token}` : "" 
     }
 });
+
+
 
 export default axiosInstance;

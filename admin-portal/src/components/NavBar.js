@@ -15,7 +15,7 @@ export default function NavBar() {
         return (
             <Nav>
                 <li className="nav-item">
-                    <span className="nav-link" onClick={logout}>
+                    <span className="nav-link" onClick={logout} style={{cursor:'pointer'}}>
                         Signout
                     </span>
                 </li>
